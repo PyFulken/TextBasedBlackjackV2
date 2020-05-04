@@ -525,7 +525,6 @@ class Dealer():
 # --------------------------------------------------PROGRAM-------------------------------------------------
 from IPython.display import clear_output
 import time
-
 print_banner()
 player_dict = {}
 end_turn = False
