@@ -525,6 +525,8 @@ class Dealer():
 # --------------------------------------------------PROGRAM-------------------------------------------------
 from IPython.display import clear_output
 import time
+
+currentbetamount= 0
 print_banner()
 player_dict = {}
 end_turn = False
