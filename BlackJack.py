@@ -493,7 +493,7 @@ class Dealer():
         """
         Reset's a player's hand
         """
-        sef.dealerhand = []
+        self.dealerhand = []
 
     def bet_recieve(self):
         """
