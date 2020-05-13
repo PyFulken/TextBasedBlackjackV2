@@ -1,6 +1,8 @@
 # --------------------------------------------------FUNCTIONS------------------------------------------------------------
 # This is the Pycharm Version, cloned for git push testing
 # This is the first commit test line!
+
+
 def input_int_sanitize():
     """
     Sanitizes Player input in instances that only an integer is supported
@@ -136,12 +138,19 @@ def game_player_turn():
     Allows every player to play its turn, sequencially.
     """
     for i in player_dict:
-        print_banner()
         print("Player", player_dict[i].name, "'s turn!")
         print("Hand:")
         player_dict[i].hand_show()
         moves_made = 0
         print("What will you do?")
+        hit_button.config(command=player_dict[i].hand_draw)
+        hit_button.grid(row=4, column=1, padx=5, pady=5)
+        surrender_button.config(command=player_dict[i].move_surrender)
+        surrender_button.grid(row=4, column=0, padx=5, pady=5)
+        double_button.config(command=player_dict[i].move_ddown)
+        double_button.grid(row=4, column=2, padx=5, pady=5)
+        stand_button.config(command=player_dict[i].move_stand)
+        stand_button.grid(row=4, column=3, padx=5, pady=5)
         while True:
             move = input()
 
@@ -315,6 +324,7 @@ class Player():
         self.playerbet = 0
         self.playerhand = []
         self.victory = False
+        self.turnend = False
 
     def hand_show(self):
         """
@@ -419,6 +429,9 @@ class Player():
         self.balance += int(self.playerbet / 2)
         self.hand_reset()
 
+    def move_stand(self):
+        self.turnend = True
+
 
 # -----------------------------------------------------------------------------------------------------------------------
 class Dealer():
@@ -515,10 +528,29 @@ class Dealer():
 
 
 # --------------------------------------------------PROGRAM-------------------------------------------------
-
+from tkinter import *
+from tkinter import ttk
 import time
 
-currentbetamount= 0
+root = Tk()
+root.geometry("570x600")
+root["bg"] = "black"
+root.title("Fulken's Blackjack")
+root.resizable(0, 0)
+main_title_label = ttk.Label(root, text="+-------------------------------------------------------------------+\n"
+                                        "                   WELCOME TO FULKEN'S                 \n"
+                                        "                            BLACKJACK                             \n"
+                                        "+-------------------------------------------------------------------+",
+                             foreground="white", background="black", font="Arial 18", justify="center").grid(row=0,
+                                                                                                             column=0,
+                                                                                                             columnspan=4)
+dealer_label = ttk.Label(root, text="Dealer:", foreground="white", background="black", font="Arial 14",
+                         justify="center").grid(row=3, column=0, columnspan=4)
+hit_button = ttk.Button(root, text="Hit!")
+surrender_button = ttk.Button(root, text="Surrender...")
+double_button = ttk.Button(root, text="DoubleDown!")
+stand_button = ttk.Button(root, text="S T A N D")
+currentbetamount = 0
 print_banner()
 player_dict = {}
 end_turn = False
@@ -529,3 +561,4 @@ player_status()
 player_begin_game()
 blackjack()
 restart_game_check()
+root.mainloop()
