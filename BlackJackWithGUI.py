@@ -1,6 +1,9 @@
 # --------------------------------------------------FUNCTIONS------------------------------------------------------------
-# This is the Pycharm Version, cloned for git push testing
-# This is the first commit test line!
+from tkinter import *
+from tkinter import ttk
+import time
+
+root = Tk()
 
 
 def input_int_sanitize():
@@ -24,15 +27,20 @@ def game_start_number_players():
     """
     Starts the game by asking how many players will play.
     """
-    print("How many players will be playing?")
-    player_amount = input_int_sanitize()
-    while player_amount > 7:
-        player_amount = input_int_sanitize()
-        print("Way too many players, I can handle up to 7.")
-    print_banner()
-    print("Creating", player_amount, "players!")
+    player_count_str = StringVar()
+    player_count_box = ttk.Combobox(root, textvariable=player_count_str, values=(1, 2, 3, 4),
+                                    state="readonly").grid(row=2, column=2, columnspan=4)
+    player_count = 0
+    if player_count_str.get() == 1:
+        player_count = 1
+    elif player_count_str.get() == 2:
+        player_count = 2
+    elif player_count_str.get() == 3:
+        player_count = 3
+    elif player_count_str.get() == 4:
+        player_count = 4
     c = []
-    for i in range(1, player_amount + 1):
+    for i in range(1, player_count + 1):
         var_name = "player" + str(i)
         c.append(var_name)
     for i in c:
@@ -133,50 +141,67 @@ def game_bets():
 
 
 # -----------------------------------------------------------------------------------------------------------------------
+def button_surrender():
+    global move
+    move = 1
+
+
+def button_hit():
+    global move
+    move = 2
+
+
+def button_ddown():
+    global move
+    move = 3
+
+
+def button_stand():
+    global move
+    move = 4
+
+
 def game_player_turn():
     """
-    Allows every player to play its turn, sequencially.
+    Allows every player to play its turn, sequentially.
     """
     for i in player_dict:
-        print("Player", player_dict[i].name, "'s turn!")
-        print("Hand:")
+        ttk.Label(root, text=f"{player_dict[i].name}'s turn",
+                  foreground="white", background="black", font="Arial 18",
+                  justify="center").grid(row=3, column=0, columnspan=4)
         player_dict[i].hand_show()
-        moves_made = 0
-        print("What will you do?")
-        hit_button.config(command=player_dict[i].hand_draw)
+        hit_button.config(command=button_hit)
         hit_button.grid(row=4, column=1, padx=5, pady=5)
-        surrender_button.config(command=player_dict[i].move_surrender)
+        surrender_button.config(command=button_surrender)
         surrender_button.grid(row=4, column=0, padx=5, pady=5)
-        double_button.config(command=player_dict[i].move_ddown)
+        double_button.config(command=button_ddown)
         double_button.grid(row=4, column=2, padx=5, pady=5)
-        stand_button.config(command=player_dict[i].move_stand)
+        stand_button.config(command=button_stand)
         stand_button.grid(row=4, column=3, padx=5, pady=5)
         while True:
-            move = input()
-
-            if move.lower() == "surrender" and moves_made == 0:
+            if move == 1:
                 dealer.bet_player_surrender()
                 player_dict[i].move_surrender()
                 break
-            elif move.lower() == "surrender" and moves_made != 0:
-                print("You can only surrender as a first move!")
-                move = input()
-            elif move.lower() == "hit":
-                moves_made += 1
+            elif move == 2:
+                surrender_button.state(["disabled"])
                 player_dict[i].hand_draw()
                 print("Hand:")
                 player_dict[i].hand_show()
                 worth = player_dict[i].hand_worth()
                 if worth == 0 or worth == 21:
                     break
-            elif move.lower() == "doubledown":
+            elif move == 3:
                 player_dict[i].move_ddown()
                 print("Hand:")
                 player_dict[i].hand_show()
                 break
-            elif move.lower() == "stand":
+            elif move == 4:
                 break
-        print(player_dict[i].name, "ends the turn!")
+        surrender_button.state(["!disabled"])
+        ttk.Label(root, text=f"{player_dict[i].name} ends its turn",
+                  foreground="white", background="black", font="Arial 18",
+                  justify="center").grid(row=3, column=0, columnspan=4)
         time.sleep(3)
 
 
@@ -528,11 +553,8 @@ class Dealer():
 
 
 # --------------------------------------------------PROGRAM-------------------------------------------------
-from tkinter import *
-from tkinter import ttk
-import time
 
-root = Tk()
+
 root.geometry("570x600")
 root["bg"] = "black"
 root.title("Fulken's Blackjack")
@@ -550,13 +572,13 @@ hit_button = ttk.Button(root, text="Hit!")
 surrender_button = ttk.Button(root, text="Surrender...")
 double_button = ttk.Button(root, text="DoubleDown!")
 stand_button = ttk.Button(root, text="S T A N D")
+
 currentbetamount = 0
-print_banner()
+move = "None"
 player_dict = {}
 end_turn = False
 time.sleep(1)
 game_start_number_players()
-print_banner()
 player_status()
 player_begin_game()
 blackjack()
